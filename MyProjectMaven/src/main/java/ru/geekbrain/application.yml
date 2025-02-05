@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/products/**
+
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/carts/**
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
