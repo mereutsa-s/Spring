@@ -50,6 +50,9 @@ public class User {
     )
     private Set<Role> roles;
 
+    public User(String name, int age, String email) {
+    }
+
     // Геттеры и сеттеры
 }
 
