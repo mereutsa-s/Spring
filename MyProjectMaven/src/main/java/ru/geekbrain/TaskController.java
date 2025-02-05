@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -13,6 +16,7 @@ public class TaskController {
 
     @Autowired
     private TaskService taskService;
+    private final TaskManager taskManager;
 
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
@@ -42,4 +46,32 @@ public class TaskController {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
     }
+    private final TaskManager taskManager;
+
+    @Autowired
+    public TaskController(TaskManager taskManager) {
+        this.taskManager = taskManager;
+        taskManager.addObserver(new TaskLogger()); // Добавляем наблюдателя
+    }
+
+    @PostMapping("/regular")
+    public void addRegularTask(@RequestParam String description) {
+        TaskFactory factory = new RegularTaskFactory();
+        Task task = factory.createTask(description);
+        taskManager.addTask(task);
+    }
+
+    @PostMapping("/urgent")
+    public void addUrgentTask(@RequestParam String description) {
+        TaskFactory factory = new UrgentTaskFactory();
+        Task task = factory.createTask(description);
+        taskManager.addTask(task);
+    }
+
+    @GetMapping
+    public List<Task> getTasks() {
+        return taskManager.getTasks();
+    }
+
+
 }
